@@ -1,12 +1,6 @@
 streamlit
-numpy 
+numpy
 sounddevice
 matplotlib
 pandas
-wave
-os
-time
-threading
-scipy.signal
-datetime
-queue
+scipy
