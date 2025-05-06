@@ -4,4 +4,3 @@ sounddevice
 matplotlib
 pandas
 scipy
-PortAudio
