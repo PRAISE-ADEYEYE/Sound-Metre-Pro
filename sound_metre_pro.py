@@ -30,10 +30,6 @@ st.markdown(
         ✨🎛️ <b>High-Tech Real-Time Audio Analyzer</b> 🎛️✨
     </h3>
 
-    <h4 style='text-align: center; font-size: 24px;'>
-        💡👨‍💻 Developed with ❤️ by <b>PRAISE ADEYEYE</b> 👨‍💻💡
-    </h4>
-
     <hr style='border-top: 2px solid #bbb;'>
 
     <blockquote style='text-align: center; font-size: 20px; color: #555;'>
