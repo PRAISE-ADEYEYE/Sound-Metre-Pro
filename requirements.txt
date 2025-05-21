@@ -1,7 +1,6 @@
 streamlit
+streamlit-webrtc
 numpy
-sounddevice
+av
 matplotlib
-pandas
 scipy
-PortAudio
