@@ -1,8 +1,7 @@
 streamlit
 streamlit-webrtc
 numpy
-av
+pandas
 matplotlib
 scipy
-pandas
-sounddevice
+av
