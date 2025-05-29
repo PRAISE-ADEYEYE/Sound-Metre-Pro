@@ -3,7 +3,6 @@ from streamlit_webrtc import webrtc_streamer, WebRtcMode, AudioProcessorBase
 import collections
 import threading
 from datetime import datetime
-import pyaudio
 import av
 import matplotlib.pyplot as plt
 import numpy as np
@@ -89,17 +88,15 @@ if webrtc_ctx.audio_processor:
 
     # Placeholder for updating elements
     placeholder = st.empty()
-
     if webrtc_ctx.state.playing:
-        st.session_state.running = True
-        while webrtc_ctx.state.playing and st.session_state.running:
+        while webrtc_ctx.state.playing:
             audio_data = audio_processor.get_audio_data()
             if len(audio_data) == 0:
-                time.sleep(1)
-                continue
-
-            if use_weighting:
-                audio_data = apply_a_weighting(audio_data, 44100)
+                time.sleep(0.01)
+            audio_data = audio_processor.get_audio_data()
+            if len(audio_data) > 0:
+                if use_weighting:
+                    audio_data = apply_a_weighting(audio_data, 44100)
 
             current_rms = rms(audio_data)
             current_db = rms_to_db(current_rms)
@@ -157,26 +154,48 @@ if webrtc_ctx.audio_processor:
                     })
                     df.index = pd.to_datetime(df['Time'], format="%H:%M:%S.%f")
                     st.line_chart(df['dB Level'])
-            time.sleep(0.1)
 
-    # Data export section after stream ends or while running
-    # 📥 Export Audio Log
-    st.markdown("### 📥 Export Audio Log")
+# 📥 Export Audio Log (Always Visible)
+st.markdown("### 📥 Export Audio Log")
 
-    # Convert to DataFrame
-    export_df = pd.DataFrame({
-        'Timestamp': list(st.session_state.time_history),
-        'dB Level': list(st.session_state.db_history),
-        'Mean Amplitude': list(st.session_state.mean_amp_history),
-        'Peak Amplitude': list(st.session_state.peak_amp_history),
-        'Dominant Frequency': list(st.session_state.freq_history),
-        'Period': list(st.session_state.period_history)
-    })
+# Create export DataFrame
+export_df = pd.DataFrame({
+    'Timestamp': list(st.session_state.time_history),
+    'dB Level': list(st.session_state.db_history),
+    'Mean Amplitude': list(st.session_state.mean_amp_history),
+    'Peak Amplitude': list(st.session_state.peak_amp_history),
+    'Dominant Frequency': list(st.session_state.freq_history),
+    'Period': list(st.session_state.period_history)
+})
 
-    csv = export_df.to_csv(index=False).encode('utf-8')
-    st.download_button(
-        label="Download CSV",
-        data=csv,
-        file_name="sound_meter_full_log.csv",
-        mime='text/csv'
-    )
+# Encode as CSV
+csv = export_df.to_csv(index=False).encode('utf-8')
+
+# Show download button
+st.download_button(
+    label="📥 Download CSV",
+    data=csv,
+    file_name="sound_meter_full_log.csv",
+    mime='text/csv'
+)
+
+st.markdown("---")
+footer_html = """
+<div style="text-align: center; color: #777; font-size: 16px; margin-top: 20px;">
+    <p>✨ Developed by <b style="color:#4CAF50;">PRAISE ADEYEYE</b> ✨</p>
+    <p>🔗 Connect with me on
+        <a href="https://linkedin.com/in/praise-adeyeye" target="_blank" style="text-decoration:none; color:#0A66C2;">
+            LinkedIn
+        </a> |
+        <a href="https://github.com/PRAISE-ADEYEYE" target="_blank" style="text-decoration:none; color:#333;">
+            GitHub
+        </a>
+    </p>
+    <blockquote style="font-style: italic; color: #555; margin-top: 10px;">
+        “Sound is the vocabulary of nature.” – Pierre Schaeffer
+    </blockquote>
+    <p style="font-size: 14px; color: #999;">&copy; {year} Sound Metre Pro. All rights reserved.</p>
+</div>
+""".format(year=datetime.now().year)
+
+st.markdown(footer_html, unsafe_allow_html=True)
