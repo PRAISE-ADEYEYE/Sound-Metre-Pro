@@ -5,3 +5,4 @@ av
 matplotlib
 scipy
 pandas
+sounddevice
